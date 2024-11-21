@@ -5,7 +5,6 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="963822c2-24b6-479b-a48a-35ca914f319b" name="Changes" comment="adding the inital files">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/arcade_platformer/arcade_platformer/game_window.py" beforeDir="false" afterPath="$PROJECT_DIR$/arcade_platformer/arcade_platformer/game_window.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -36,12 +35,12 @@
     &quot;assignee&quot;: &quot;welikerice&quot;
   }
 }</component>
-  <component name="GithubPullRequestsUISettings"><![CDATA[{
-  "selectedUrlAndAccountId": {
-    "url": "https://welikerice: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@github.com/welikerice/CS122F24-Term-Project.git",
-    "accountId": "a883ed7a-26f0-4f72-9064-a0112eb4cef9"
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://welikerice: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@github.com/welikerice/CS122F24-Term-Project.git&quot;,
+    &quot;accountId&quot;: &quot;a883ed7a-26f0-4f72-9064-a0112eb4cef9&quot;
   }
-}]]></component>
+}</component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 8
 }</component>
@@ -120,6 +119,7 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="adding the inital files" />
-    <option name="LAST_COMMIT_MESSAGE" value="adding the inital files" />
+    <MESSAGE value="added a camera to follow the player and also the UI. Includes collision with the floor as well." />
+    <option name="LAST_COMMIT_MESSAGE" value="added a camera to follow the player and also the UI. Includes collision with the floor as well." />
   </component>
 </project>
