@@ -4,10 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="963822c2-24b6-479b-a48a-35ca914f319b" name="Changes" comment="adding the inital files">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/arcade_platformer/arcade_platformer/game_window.py" beforeDir="false" afterPath="$PROJECT_DIR$/arcade_platformer/arcade_platformer/game_window.py" afterDir="false" />
-    </list>
+    <list default="true" id="963822c2-24b6-479b-a48a-35ca914f319b" name="Changes" comment="added enemy" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -105,7 +102,39 @@
       <option name="project" value="LOCAL" />
       <updated>1730787533985</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="added enemy">
+      <option name="closed" value="true" />
+      <created>1732400164086</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1732400164086</updated>
+    </task>
+    <task id="LOCAL-00005" summary="added enemy">
+      <option name="closed" value="true" />
+      <created>1732400205183</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1732400205183</updated>
+    </task>
+    <task id="LOCAL-00006" summary="added enemy">
+      <option name="closed" value="true" />
+      <created>1732400390464</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1732400390464</updated>
+    </task>
+    <task id="LOCAL-00007" summary="added enemy">
+      <option name="closed" value="true" />
+      <created>1732400394447</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1732400394447</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -122,6 +151,7 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="adding the inital files" />
     <MESSAGE value="added a camera to follow the player and also the UI. Includes collision with the floor as well." />
-    <option name="LAST_COMMIT_MESSAGE" value="added a camera to follow the player and also the UI. Includes collision with the floor as well." />
+    <MESSAGE value="added enemy" />
+    <option name="LAST_COMMIT_MESSAGE" value="added enemy" />
   </component>
 </project>
