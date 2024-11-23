@@ -16,8 +16,8 @@ SCREEN_TITLE = "Deprecated King"
 ASSETS_PATH = pathlib.Path(__file__).resolve().parent.parent / "assets"
 
 # Map scaling
-MAP_SCALING = 2.0
-PLAYER_SCALING = 2.0
+MAP_SCALING = 0.5
+PLAYER_SCALING = MAP_SCALING * 2.0
 COIN_SCALING = MAP_SCALING
 SPRITE_PIXEL_SIZE = 128
 GRID_PIXEL_SIZE = SPRITE_PIXEL_SIZE * MAP_SCALING
@@ -349,7 +349,7 @@ class Platformer(arcade.Window):
 
         self.camera.use()
 
-        self.scene.draw(pixelated=True)
+        self.scene.draw()
 
         self.gui_camera.use()
 
