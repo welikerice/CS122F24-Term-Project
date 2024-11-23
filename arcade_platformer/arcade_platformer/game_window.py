@@ -23,6 +23,12 @@ PLAYER_SCALING = MAP_SCALING
 SPRITE_PIXEL_SIZE = 128
 GRID_PIXEL_SIZE = SPRITE_PIXEL_SIZE * MAP_SCALING
 
+#Bow Constants
+SPRITE_SCALEING_ARROW = 0.8
+SHOOT_SPEED = 15
+ARROW_SPEED = 12
+ARROW_DAMAGE = 25
+
 #movement speed in pixels per frame
 PLAYER_MOVEMENT_SPEED = 7
 GRAVITY = 4.0
@@ -48,6 +54,7 @@ LAYER_NAME_BACKGROUND = "Background"
 LAYER_NAME_LADDERS = "Ladders"
 LAYER_NAME_PLAYER = "Player"
 LAYER_NAME_ENEMIES = "Enemies"
+LAYER_NAME_ARROWS = "Arrows"
 
 def load_texture_pair(filename):
     """load a texture pair"""
@@ -69,7 +76,7 @@ class Character(arcade.Sprite):
         self.fall_texture_pair = load_texture_pair(f"{characters_path}3.png")
 
         self.walk_cycle = []
-        for i in range((4)):
+        for i in range(4):
             texture = load_texture_pair(f"{characters_path}{i + 1}.png")
             self.walk_cycle.append(texture)
 
@@ -85,6 +92,8 @@ class Character(arcade.Sprite):
 
         # hit box texture
         self.set_hit_box(self.texture.hit_box_points)
+
+        self.health = 0
 
 class Enemy(Character):
     def __init__(self, name_folder, name_file):
@@ -117,11 +126,15 @@ class MiniEnemy(Enemy):
         #update the file path when set up
         super().__init__("Xeno", '')
 
+        self.health = 50
+
 class Boss(Enemy):
     def __init__(self):
 
         #update the file pather when set up
         super().__init__("darkemperor", 'darkemperor')
+
+        self.health = 100
 
 class PlayerCharacter(Character):
     """Player Sprite"""
@@ -132,6 +145,7 @@ class PlayerCharacter(Character):
         self.jumping = False
         self.climbing = False
         self.is_on_ladder = False
+        self.health = 3
 
 
     def update_animation(self, delta_time: float = 1 / 60):
@@ -187,6 +201,7 @@ class Platformer(arcade.Window):
         self.right_pressed = False
         self.up_pressed = False
         self.down_pressed = False
+        self.shoot_pressed = False
         self.jump_needs_reset = False
 
         self.tile_map = None
@@ -219,6 +234,10 @@ class Platformer(arcade.Window):
         # Someplace to keep score
         self.score = 0
 
+        #shooting mechs
+        self.can_shoot = False
+        self.shoot_timer = 0
+
         # Which level are we on?
         self.level = 1
 
@@ -232,6 +251,9 @@ class Platformer(arcade.Window):
         # self.victory_sound = arcade.load_sound(
         #     str(ASSETS_PATH / "sounds" / "victory.wav")
         # )
+        #self.shoot_sound = arcade.load_sound(str(ASSETS_PATH / "sounds" / "shoot.wav")
+
+        #self.hit_sound = arcade.load_sound(str(ASSETS_PATH / "sounds" / "hit.wav")
 
     def setup(self):
         """Sets up the game for the current level"""
@@ -354,6 +376,9 @@ class Platformer(arcade.Window):
         elif key == arcade.key.S or key == arcade.key.DOWN:
             self.down_pressed = True
 
+        if key == arcade.key.SPACE:
+            self.shoot_pressed = True
+
         self.process_keychange()
 
     def on_key_release(self, key: int, modifiers: int):
@@ -370,6 +395,9 @@ class Platformer(arcade.Window):
             self.jump_needs_reset = False
         elif key == arcade.key.S or key == arcade.key.DOWN:
             self.down_pressed = False
+
+        if key == arcade.key.SPACE:
+            self.shoot_pressed = False
 
         self.process_keychange()
 
@@ -394,8 +422,28 @@ class Platformer(arcade.Window):
             #self.player.is_on_ladder = False
             #self.process_keychange()
 
+        if self.can_shoot:
+            if self.shoot_pressed:
+                arrow = arcade.Sprite(str(ASSETS_PATH / "recurve bow" / "recurvebow1.png"),SPRITE_SCALEING_ARROW,)
+                if self.player.facing_dir == RIGHT_FACING:
+                    arrow.change_x = ARROW_SPEED
+                else:
+                    arrow.change_x = -ARROW_SPEED
+                arrow.center_x = self.player.center_x
+                arrow.center_y = self.player.center_y
+                self.scene.add_sprite(LAYER_NAME_ARROWS, arrow)
+
+                self.can_shoot = False
+            else:
+                self.shoot_timer += 1
+                if self.shoot_timer == SHOOT_SPEED:
+                    self.can_shoot = True
+                    self.shoot_timer = 0
+
+
+        #updating animations
         self.scene.update_animation(delta_time, [LAYER_NAME_PLAYER])
-        #for when enemies are implemented
+        #FOR WHEN ENEMIES IS IMPLEMENTED
         #self.scene.update_animation(delta_time, [LAYER_NAME_PLAYER,LAYER_NAME_ENEMIES])
 
         #for enemy in self.scene.get_sprite_list(LAYER_NAME_ENEMIES):
@@ -404,6 +452,33 @@ class Platformer(arcade.Window):
 
             #if(enemy.boundary_left and enemy.left < enemy.boundary_left and enemy.change_x < 0):
                 #enemy.change_x *= -1
+
+        #ENEMY COLLISION
+        #player_collision_list = arcade.check_for_collision_with_lists(self.player, [self.scene.get_sprite_list(LAYER_NAME_ENEMIES)],)
+
+        for arrow in self.scene.get_sprite_list(LAYER_NAME_ARROWS):
+            hit_list = arcade.check_for_collision_with_list(arrow,[self.scene.get_sprite_list(LAYER_NAME_ENEMIES), self.scene.get_sprite_list(LAYER_NAME_PLATFORMS),])
+
+            if hit_list:
+                arrow.remove_from_sprite_list()
+
+                for collision in hit_list:
+                    if(self.scene.get_sprite_list(LAYER_NAME_ENEMIES) in collision.sprite_lists):
+                        collision.health -= ARROW_DAMAGE
+
+                        if collision.health <= 0:
+                            collision.remove_from_sprite_lists()
+                            self.score += 100
+                return
+            if (arrow.right < 0) or (arrow.left > (self.tile_map.width * self.tile_map.tile_width) * MAP_SCALING):
+                arrow.remove_from_sprite_list()
+        #for collision in player_collision_list:
+            #if self.player.health == 0:
+                #self.setup()
+                #return
+            #elif self.scene.get_sprite_list(LAYER_NAME_ENEMIES) in collision.sprite_lists:
+                #self.player.health -= 1
+                #return
 
 
 
