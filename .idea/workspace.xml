@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="963822c2-24b6-479b-a48a-35ca914f319b" name="Changes" comment="adding the inital files">
+    <list default="true" id="963822c2-24b6-479b-a48a-35ca914f319b" name="Changes" comment="added enemy">
       <change beforePath="$PROJECT_DIR$/arcade_platformer/arcade_platformer/game_window.py" beforeDir="false" afterPath="$PROJECT_DIR$/arcade_platformer/arcade_platformer/game_window.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -19,13 +19,6 @@
       </list>
     </option>
   </component>
-  <component name="Git.Pull.Settings">
-    <option name="OPTIONS">
-      <set>
-        <option value="FF_ONLY" />
-      </set>
-    </option>
-  </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
@@ -37,7 +30,7 @@
 }</component>
   <component name="GithubPullRequestsUISettings">{
   &quot;selectedUrlAndAccountId&quot;: {
-    &quot;url&quot;: &quot;https://welikerice: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@github.com/welikerice/CS122F24-Term-Project.git&quot;,
+    &quot;url&quot;: &quot;https://welikerice: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@github.com/welikerice/CS122F24-Term-Project.git&quot;,
     &quot;accountId&quot;: &quot;a883ed7a-26f0-4f72-9064-a0112eb4cef9&quot;
   }
 }</component>
@@ -54,6 +47,7 @@
   &quot;keyToString&quot;: {
     &quot;Python.game_window.executor&quot;: &quot;Run&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
     &quot;git-widget-placeholder&quot;: &quot;main&quot;
   }
 }</component>
@@ -66,7 +60,7 @@
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-python-sdk-d7ad00fb9fc3-c546a90a8094-com.jetbrains.pycharm.community.sharedIndexes.bundled-PC-242.23726.102" />
+        <option value="bundled-python-sdk-fb887030ada0-aa17d162503b-com.jetbrains.pycharm.community.sharedIndexes.bundled-PC-243.21565.199" />
       </set>
     </attachedChunks>
   </component>
@@ -103,7 +97,47 @@
       <option name="project" value="LOCAL" />
       <updated>1730787533985</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="added enemy">
+      <option name="closed" value="true" />
+      <created>1732400164086</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1732400164086</updated>
+    </task>
+    <task id="LOCAL-00005" summary="added enemy">
+      <option name="closed" value="true" />
+      <created>1732400205183</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1732400205183</updated>
+    </task>
+    <task id="LOCAL-00006" summary="added enemy">
+      <option name="closed" value="true" />
+      <created>1732400390464</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1732400390464</updated>
+    </task>
+    <task id="LOCAL-00007" summary="added enemy">
+      <option name="closed" value="true" />
+      <created>1732400394447</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1732400394447</updated>
+    </task>
+    <task id="LOCAL-00008" summary="added enemy">
+      <option name="closed" value="true" />
+      <created>1732403480839</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1732403480840</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -120,6 +154,7 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="adding the inital files" />
     <MESSAGE value="added a camera to follow the player and also the UI. Includes collision with the floor as well." />
-    <option name="LAST_COMMIT_MESSAGE" value="added a camera to follow the player and also the UI. Includes collision with the floor as well." />
+    <MESSAGE value="added enemy" />
+    <option name="LAST_COMMIT_MESSAGE" value="added enemy" />
   </component>
 </project>
