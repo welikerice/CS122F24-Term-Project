@@ -5,7 +5,87 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="963822c2-24b6-479b-a48a-35ca914f319b" name="Changes" comment="added enemy">
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_11_16_24,_7_52 PM_[Changes]/shelved.patch" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_11_16_24__7_52PM__Changes_.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_11_4_24__9_49PM__Changes_.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_11_4_24__9_49PM__Changes_.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/arcade_platformer/arcade_platformer/game_window.py" beforeDir="false" afterPath="$PROJECT_DIR$/arcade_platformer/arcade_platformer/game_window.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/arcade_platformer/assets/images/enemies/Xeno/Fight/0.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/arcade_platformer/assets/images/enemies/Xeno/Fight/1.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/arcade_platformer/assets/images/enemies/Xeno/Fight/10.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/arcade_platformer/assets/images/enemies/Xeno/Fight/11.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/arcade_platformer/assets/images/enemies/Xeno/Fight/12.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/arcade_platformer/assets/images/enemies/Xeno/Fight/13.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/arcade_platformer/assets/images/enemies/Xeno/Fight/14.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/arcade_platformer/assets/images/enemies/Xeno/Fight/15.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/arcade_platformer/assets/images/enemies/Xeno/Fight/2.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/arcade_platformer/assets/images/enemies/Xeno/Fight/3.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/arcade_platformer/assets/images/enemies/Xeno/Fight/4.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/arcade_platformer/assets/images/enemies/Xeno/Fight/5.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/arcade_platformer/assets/images/enemies/Xeno/Fight/6.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/arcade_platformer/assets/images/enemies/Xeno/Fight/7.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/arcade_platformer/assets/images/enemies/Xeno/Fight/8.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/arcade_platformer/assets/images/enemies/Xeno/Fight/9.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/arcade_platformer/assets/images/enemies/Xeno/Fight/Gif/Fight.gif" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/arcade_platformer/assets/images/enemies/Xeno/Walk/1.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/arcade_platformer/assets/images/enemies/Xeno/Walk/2.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/arcade_platformer/assets/images/enemies/Xeno/Walk/3.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/arcade_platformer/assets/images/enemies/Xeno/Walk/4.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/arcade_platformer/assets/images/enemies/Xeno/Walk/Gif/Walking.gif" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/arcade_platformer/assets/maps/platformer_map1.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/arcade_platformer/assets/recurve bow/recurvebow1.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/arcade_platformer/assets/recurve bow/recurvebow10.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/arcade_platformer/assets/recurve bow/recurvebow11.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/arcade_platformer/assets/recurve bow/recurvebow12.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/arcade_platformer/assets/recurve bow/recurvebow13.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/arcade_platformer/assets/recurve bow/recurvebow14.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/arcade_platformer/assets/recurve bow/recurvebow15.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/arcade_platformer/assets/recurve bow/recurvebow16.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/arcade_platformer/assets/recurve bow/recurvebow17.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/arcade_platformer/assets/recurve bow/recurvebow18.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/arcade_platformer/assets/recurve bow/recurvebow19.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/arcade_platformer/assets/recurve bow/recurvebow2.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/arcade_platformer/assets/recurve bow/recurvebow20.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/arcade_platformer/assets/recurve bow/recurvebow21.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/arcade_platformer/assets/recurve bow/recurvebow22.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/arcade_platformer/assets/recurve bow/recurvebow23.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/arcade_platformer/assets/recurve bow/recurvebow24.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/arcade_platformer/assets/recurve bow/recurvebow25.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/arcade_platformer/assets/recurve bow/recurvebow26.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/arcade_platformer/assets/recurve bow/recurvebow27.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/arcade_platformer/assets/recurve bow/recurvebow28.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/arcade_platformer/assets/recurve bow/recurvebow29.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/arcade_platformer/assets/recurve bow/recurvebow3.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/arcade_platformer/assets/recurve bow/recurvebow30.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/arcade_platformer/assets/recurve bow/recurvebow31.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/arcade_platformer/assets/recurve bow/recurvebow32.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/arcade_platformer/assets/recurve bow/recurvebow33.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/arcade_platformer/assets/recurve bow/recurvebow34.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/arcade_platformer/assets/recurve bow/recurvebow35.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/arcade_platformer/assets/recurve bow/recurvebow36.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/arcade_platformer/assets/recurve bow/recurvebow37.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/arcade_platformer/assets/recurve bow/recurvebow38.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/arcade_platformer/assets/recurve bow/recurvebow39.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/arcade_platformer/assets/recurve bow/recurvebow4.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/arcade_platformer/assets/recurve bow/recurvebow40.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/arcade_platformer/assets/recurve bow/recurvebow41.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/arcade_platformer/assets/recurve bow/recurvebow42.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/arcade_platformer/assets/recurve bow/recurvebow43.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/arcade_platformer/assets/recurve bow/recurvebow44.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/arcade_platformer/assets/recurve bow/recurvebow45.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/arcade_platformer/assets/recurve bow/recurvebow46.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/arcade_platformer/assets/recurve bow/recurvebow47.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/arcade_platformer/assets/recurve bow/recurvebow48.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/arcade_platformer/assets/recurve bow/recurvebow49.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/arcade_platformer/assets/recurve bow/recurvebow5.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/arcade_platformer/assets/recurve bow/recurvebow50.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/arcade_platformer/assets/recurve bow/recurvebow51.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/arcade_platformer/assets/recurve bow/recurvebow52.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/arcade_platformer/assets/recurve bow/recurvebow6.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/arcade_platformer/assets/recurve bow/recurvebow7.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/arcade_platformer/assets/recurve bow/recurvebow8.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/arcade_platformer/assets/recurve bow/recurvebow9.png" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -34,6 +114,9 @@
     &quot;accountId&quot;: &quot;a883ed7a-26f0-4f72-9064-a0112eb4cef9&quot;
   }
 }</component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 8
 }</component>
@@ -43,16 +126,31 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Python.game_window.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Python.game_window.executor": "Run",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "git-widget-placeholder": "willyta1-patch",
+    "last_opened_file_path": "C:/Users/w/PycharmProjects/CS122F24-Term-Project/CS122F24-Term-Project/arcade_platformer/assets",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\w\PycharmProjects\CS122F24-Term-Project\CS122F24-Term-Project\arcade_platformer\assets" />
+      <recent name="C:\Users\w\PycharmProjects\CS122F24-Term-Project\CS122F24-Term-Project\arcade_platformer\assets\images" />
+      <recent name="C:\Users\w\PycharmProjects\CS122F24-Term-Project\CS122F24-Term-Project\arcade_platformer\assets\images\enemies" />
+      <recent name="C:\Users\w\PycharmProjects\CS122F24-Term-Project\CS122F24-Term-Project\arcade_platformer\assets\maps" />
+    </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\w\PycharmProjects\CS122F24-Term-Project\CS122F24-Term-Project\arcade_platformer\assets\images" />
       <recent name="$PROJECT_DIR$" />
       <recent name="$PROJECT_DIR$/.venv" />
     </key>
@@ -60,7 +158,7 @@
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-python-sdk-fb887030ada0-aa17d162503b-com.jetbrains.pycharm.community.sharedIndexes.bundled-PC-243.21565.199" />
+        <option value="bundled-python-sdk-5a2391486177-2887949eec09-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-233.13763.11" />
       </set>
     </attachedChunks>
   </component>
@@ -72,6 +170,8 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1730248579362</updated>
+      <workItem from="1732432525044" duration="6023000" />
+      <workItem from="1732438616781" duration="33391000" />
     </task>
     <task id="LOCAL-00001" summary="adding the inital files">
       <option name="closed" value="true" />
@@ -140,6 +240,9 @@
     <option name="localTasksCounter" value="9" />
     <servers />
   </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
   <component name="Vcs.Log.Tabs.Properties">
     <option name="TAB_STATES">
       <map>
@@ -156,5 +259,8 @@
     <MESSAGE value="added a camera to follow the player and also the UI. Includes collision with the floor as well." />
     <MESSAGE value="added enemy" />
     <option name="LAST_COMMIT_MESSAGE" value="added enemy" />
+  </component>
+  <component name="com.intellij.coverage.CoverageDataManagerImpl">
+    <SUITE FILE_PATH="coverage/CS122F24_Term_Project$game_window.coverage" NAME="game_window Coverage Results" MODIFIED="1732521211779" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/arcade_platformer/arcade_platformer" />
   </component>
 </project>
