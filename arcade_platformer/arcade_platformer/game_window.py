@@ -486,11 +486,13 @@ class Platformer(arcade.Window):
                 self.can_shoot = False
         else:
 
-            self.shoot_timer += 1
-            if self.shoot_timer == SHOOT_SPEED:
-                self.bow.visible = False
+            self.shoot_timer += 0.5
+            if self.shoot_timer >= SHOOT_SPEED:
+
                 self.can_shoot = True
                 self.shoot_timer = 0
+            elif self.shoot_timer > SHOOT_SPEED/2:
+                self.bow.visible = False
 
         for arrow in self.scene.get_sprite_list(LAYER_NAME_ARROWS):
             arrow.center_x += arrow.change_x
