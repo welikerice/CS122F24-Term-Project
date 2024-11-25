@@ -8,6 +8,11 @@ import arcade
 HORIZONTAL_SCREEN = 1024
 VERTICAL_SCREEN = 600
 SCREEN_TITLE = "Deprecated King"
+##########################################
+# FLASHING WARNING
+# ENEMY SPRITES FLASH A LOT DUE TO REFRESH RATE/DELTA TIME?
+
+##########################################
 
 # KEYS = [arcade.key.A, arcade.key.W, arcade.key.S, arcade.key.D, arcade.key.F, arcade.key.G, arcade.key.SPACE, arcade.key.LSHIFT]
 # # for now these are gonna be the keys for movement, we can change them if its hard for new users to
