@@ -14,7 +14,7 @@ SCREEN_TITLE = "Deprecated King"
 
 ##########################################
 
-# KEYS = [arcade.key.A, arcade.key.W, arcade.key.S, arcade.key.D, arcade.key.F, arcade.key.G, arcade.key.SPACE, arcade.key.LSHIFT]
+# KEYS = [arcade.key.A, arcade.key.W, arcade.key.S, arcade.key.D, arcade.key.J, arcade.key.K]
 # # for now these are gonna be the keys for movement, we can change them if its hard for new users to
 # # move + execute
 
@@ -23,30 +23,33 @@ ASSETS_PATH = pathlib.Path(__file__).resolve().parent.parent / "assets"
 
 # Sprite Scaling
 MAP_SIZE_MULTIPLIER = 2.0
-PLAYER_SIZE_MULTIPLIER = MAP_SIZE_MULTIPLIER
+PLAYER_SIZE_MULTIPLIER = 2.0
 XENO_SIZE_MULTIPLIER = 0.5
-#COIN_SCALING = MAP_SCALING
-SPRITE_PIXEL_SIZE = 128
-GRID_PIXEL_SIZE = SPRITE_PIXEL_SIZE * MAP_SIZE_MULTIPLIER
+BOW_SIZE_MULTIPLIER = 1.5
+# Our pixels are 16x16 in Tiled
+SPRITE_PIXEL_MULTIPLIER = 16
+# This is our scaled size in the map
+MAP_PIXEL_MULTIPLIER = SPRITE_PIXEL_MULTIPLIER * MAP_SIZE_MULTIPLIER
 
-#movement speed in pixels per frame
+# Physics and Movement Constants
+ENEMY_MOVEMENT_SPEED = 3
 PLAYER_MOVEMENT_SPEED = 7
 GRAVITY = 1.2
 PLAYER_JUMP_SPEED = 25
+SLASH_X_KNOCKBACK = 20
 
-#Bow Constants
+# Cant put multiple enemies into phys engine
+ENEMY_FALL_SPEED = -5
+ENEMY_LIFT_SPEED = 10
+
+#Attack constants
+ATTACK_INTERVAL = 30
 ARROW_SPRITE_SCALING = 0.8
-SHOOT_SPEED = 15
+SLASH_DAMAGE = 8
 ARROW_SPEED = 5
 ARROW_DAMAGE = 25
 
-#margins of view point
-# LEFT_VIEW = 500
-# RIGHT_VIEW = 600
-# TOP_VIEW = 600
-# BOTTOM_VIEW = 650
-
-
+# Player initial coordinates
 PLAYER_INIT_X = 100
 PLAYER_INIT_Y = 100
 
@@ -54,16 +57,13 @@ PLAYER_INIT_Y = 100
 CHARACTER_FACE_RIGHT = 0
 CHARACTER_FACE_LEFT = 1
 
-# LAYER_NAME_MOVING_PLATFORMS = "Moving Platforms"
 LAYER_NAME_PLATFORMS = "Platforms Layer"
-# LAYER_NAME_COINS = "Coins"
-LAYER_NAME_BACKGROUND = "Background"
-LAYER_NAME_LADDERS = "Ladders"
 LAYER_NAME_PLAYER = "Player"
 LAYER_NAME_ENEMIES = "Enemies"
 LAYER_NAME_BOSS = "Boss"
 LAYER_NAME_ARROWS = "Arrows"
 LAYER_NAME_BOW = 'Bows'
+LAYER_NAME_SLASH = 'Slash'
 def load_texture_and_flipped(filename):
     """load a pair of textures, one original, one flipped"""
     # 0 for right (original, 1 for flipped to other direction)
@@ -73,6 +73,7 @@ def load_texture_and_flipped(filename):
     return texture_and_flipped
 
 class Arrow(arcade.Sprite):
+    """Creates Arrow sprites without needing multiple sprites"""
     def __init__(self, name_folder, name_file):
         super().__init__()
         characters_path = ASSETS_PATH / f"{name_folder}/{name_file}"
@@ -87,7 +88,9 @@ class Arrow(arcade.Sprite):
         elif self.change_x > 0 and self.character_face_direction == CHARACTER_FACE_LEFT:
             self.character_face_direction = CHARACTER_FACE_RIGHT
         self.texture = self.arrow_dir[self.character_face_direction]
+
 class Bow(arcade.Sprite):
+    """Creates bow sprite with animation for visibility when firing arrows"""
     def __init__(self, name_folder, name_file):
         super().__init__()
         characters_path = ASSETS_PATH / f"{name_folder}/{name_file}"
@@ -101,18 +104,50 @@ class Bow(arcade.Sprite):
         self.character_face_direction = CHARACTER_FACE_RIGHT
 
     def update_animation(self, delta_time: float = 1 / 60):
+        # Only update when its visible
         if self.visible:
             if self.change_x < 0 and self.character_face_direction == CHARACTER_FACE_RIGHT:
                 self.character_face_direction = CHARACTER_FACE_LEFT
             elif self.change_x > 0 and self.character_face_direction == CHARACTER_FACE_LEFT:
                 self.character_face_direction = CHARACTER_FACE_RIGHT
 
-
+            # Bow has a few more sprites in its animation, so it updates with more stages of texture
             self.cur_texture += 1
             if self.cur_texture >= 6:
                 self.cur_texture = 0
             self.texture = self.bow_cycle[self.cur_texture][self.character_face_direction]
+
         # 41-46
+class Slash(arcade.Sprite):
+    """Creates slash animation sprite obj for collision with enemies when slashing"""
+    def __init__(self, name_folder, name_file):
+        super().__init__()
+        characters_path = ASSETS_PATH / f"{name_folder}/{name_file}"
+        self.texture = load_texture_and_flipped(f"{characters_path}1.png")[0]
+        self.slash_cycle = []
+
+        for i in range(4): # 1,2,3,4
+            texture = load_texture_and_flipped(f"{characters_path}{i + 1}.png")
+            self.slash_cycle.append(texture)
+        self.cur_texture = 0
+        self.character_face_direction = CHARACTER_FACE_RIGHT
+
+
+
+    def update_animation(self, delta_time: float = 1 / 60):
+
+        if self.change_x < 0 and self.character_face_direction == CHARACTER_FACE_RIGHT:
+            self.character_face_direction = CHARACTER_FACE_LEFT
+        elif self.change_x > 0 and self.character_face_direction == CHARACTER_FACE_LEFT:
+            self.character_face_direction = CHARACTER_FACE_RIGHT
+
+        self.cur_texture += 1
+        if self.cur_texture >= 3:
+            self.cur_texture = 0
+        self.texture = self.slash_cycle[self.cur_texture][self.character_face_direction]
+        return
+
+
 
 class Character(arcade.Sprite):
     """Creates a character based on the arcade Sprite class,
@@ -125,15 +160,15 @@ class Character(arcade.Sprite):
         #Setting file path of sprite
         characters_path = ASSETS_PATH / f"{name_folder}/{name_file}"
 
-        # set the initial texture
+        # set the initial textures
         self.idle_textures = load_texture_and_flipped(f"{characters_path}1.png")
         self.texture = self.idle_textures[0]
         self.character_face_direction = CHARACTER_FACE_RIGHT
 
-        self.walk_cycle = []
+        self.walk_textures = []
         for i in range(4):
             textures = load_texture_and_flipped(f"{characters_path}{i + 1}.png")
-            self.walk_cycle.append(textures)
+            self.walk_textures.append(textures)
 
         self.cur_texture = 0
         self.scale = PLAYER_SIZE_MULTIPLIER
@@ -141,10 +176,6 @@ class Character(arcade.Sprite):
         self.jump_textures = load_texture_and_flipped(f"{characters_path}2.png")
         self.fall_textures = load_texture_and_flipped(f"{characters_path}3.png")
 
-        # hit box texture
-        # self.set_hit_box(self.texture.hit_box_points)
-        #
-        # self.health = 100
     def update_animation(self, delta_time: float = 1 / 60):
 
         #check if we need to flip the character around
@@ -163,22 +194,20 @@ class Character(arcade.Sprite):
             self.texture = self.fall_textures[self.character_face_direction]
             return
 
-
         #walking animation
         self.cur_texture += 1
         if self.cur_texture >= 4:
             self.cur_texture = 0
-        self.texture = self.walk_cycle[self.cur_texture][self.character_face_direction]
+        self.texture = self.walk_textures[self.cur_texture][self.character_face_direction]
 
 class Enemy(Character):
+    """Parent class of enemies"""
     def __init__(self, name_folder, name_file):
 
         super().__init__(name_folder, name_file)
 
 class MiniEnemy(Enemy):
     def __init__(self):
-
-        #update the file path when set up
         super().__init__("images/enemies/Xeno/Walk", "Xeno")
         self.character_face_direction = CHARACTER_FACE_RIGHT
         self.health = 50
@@ -189,76 +218,69 @@ class MiniEnemy(Enemy):
 class Boss(Enemy):
     def __init__(self):
 
-        #update the file pather when set up
+        """Creates a Boss (Knight)"""
         super().__init__("darkemperor", 'darkemperor_run')
         self.character_face_direction = CHARACTER_FACE_RIGHT
-        self.health = 50
+        self.health = 500
 
 
 class PlayerCharacter(Character):
-    """Player Sprite"""
+    """Creates the player sprite: A king"""
     def __init__(self):
         super().__init__("player_sprites", 'king')
-
-        #track the state we are in
-        self.jumping = False
         self.health = 3
-
         self.character_face_direction = CHARACTER_FACE_RIGHT
 
-
-
-
 class Platformer(arcade.Window):
+    """Creates the window which the user interacts with """
     def __init__(self) -> None:
         super().__init__(HORIZONTAL_SCREEN, VERTICAL_SCREEN, SCREEN_TITLE)
         arcade.set_background_color(arcade.csscolor.SKY_BLUE)
-        # file_path = os.path.dirname(os.path.abspath(__file__))
-        # os.chdir(file_path)
 
-        #track the current state of what key is pressed
-        self.left_pressed = False
-        self.right_pressed = False
+        # Track key presses (Movement and Combat)
+        # "W, A, D "
+        self.move_left = False
+        self.move_right = False
         self.up_pressed = False
-        self.down_pressed = False
-        self.shoot_pressed = False
-        self.jump_needs_reset = False
+        self.can_jump = True
 
+        # "J, K"
+        self.shoot_pressed = False
+        self.slash_pressed = False
+
+        # The map to be loaded into the scene
         self.tile_map = None
 
-        # These lists will hold different sets of sprites
-        self.coins = None
-        self.background = None
-        self.collisions = None
-        self.ladders = None
-        self.goals = None
+        # For enemy and boss sprites
         self.enemies = None
         self.boss = None
+
         # mainly for displaying the platform i guess
         self.scene = None
-
 
         # One sprite for the player, no more is needed
         self.player = None
 
-        # We need a physics engine as well
+        # We need a physics engine as well for physics
         self.physics_engine = None
 
-        #Camera that is used to scroll the screen
+        #Camera for screen and UI
         self.camera = None
+        self.ui_camera = None
 
-        self.gui_camera = None
+        # Init Attack Variables
+        self.attack = False
+        self.attack_timer = 0
 
-        self.end_of_map = 0
+        # Init Placeholders for bow and slash sprites
+        self.bow = None
+        self.slash = None
 
-        # Someplace to keep score
-        self.score = 0
+        # Collision Variables, for temporary invulnerability after collision
+        self.enemy_collision_timer = 60
+        self.can_collision_damage = False
 
-        #shooting mechs
-        self.can_shoot = False
-        self.shoot_timer = 0
-
-        # Which level are we on?
+        # Track level for changing levels/maps
         self.level = 1
 
         # Load up our sounds here
@@ -278,122 +300,69 @@ class Platformer(arcade.Window):
     def setup(self):
         """Sets up the game for the current level"""
 
-        #setup the cam
+        # Camera setup
+        # For some reason, needs 2 cameras, otherwise ui wont follow
         self.camera = arcade.Camera(self.width, self.height)
+        self.ui_camera = arcade.Camera(self.width, self.height)
 
-        self.gui_camera = arcade.Camera(self.width, self.height)
 
-        self.score = 0
-        self.can_shoot = True
-        self.shoot_timer = 0
-        map = ASSETS_PATH / "maps" / "platformer_map1.json"
+        # Tracks attack interval time
+        self.attack = True
+        self.attack_timer = 0
+
+        # Map Path
+        map = ASSETS_PATH / "maps" / f"platformer_map{self.level}.json"
         layer_options = {
-            "Platforms Layer": {"use_spatial_hash": True,},
+            "Platforms Layer": {"use_spatial_hash": True},
         }
 
         self.tile_map = arcade.load_tilemap(map, MAP_SIZE_MULTIPLIER, layer_options)
-        #self.collisions = arcade.load_tilemap(map, MAP_SCALING, layer_options)
-        self.scene = arcade.Scene.from_tilemap(self.tile_map)
         # scene is needed, cannot directly use tile map as scene anymore
+        self.scene = arcade.Scene.from_tilemap(self.tile_map)
 
+
+        # Create our player character and set position on map
         self.player = PlayerCharacter()
         self.player.center_x = PLAYER_INIT_X
         self.player.center_y = PLAYER_INIT_Y
         self.scene.add_sprite(LAYER_NAME_PLAYER, self.player)
 
+        # Creates player's bow sprite
         self.bow = Bow("recurve bow", "recurvebow")
         self.bow.visible = False
         self.bow.center_x = PLAYER_INIT_X
-        self.bow.center_x = PLAYER_INIT_Y
-
+        self.bow.center_y = PLAYER_INIT_Y
+        self.bow.scale = BOW_SIZE_MULTIPLIER
         self.scene.add_sprite(LAYER_NAME_BOW, self.bow)
 
+        # creates player's slash sprite
+        self.slash = Slash("slash", "swoosh")
+        self.slash.visible = False
+        self.slash.center_x = PLAYER_INIT_X
+        self.slash.center_Y = PLAYER_INIT_Y
+        self.slash.scale = 4
+        self.scene.add_sprite(LAYER_NAME_SLASH, self.slash)
+
+        # Init layers for enemies (before adding any enemies)
         self.enemies = []
-        for i in range(5):
-            enemy = MiniEnemy()
-            enemy.center_x = 200 + i *20
-            enemy.center_y = 100
-            enemy.change_y = -20
-            enemy.change_x = 2
-            self.scene.add_sprite(LAYER_NAME_ENEMIES, enemy)
-            self.enemies.append(enemy)
+        self.scene.add_sprite_list(LAYER_NAME_ENEMIES)
+        self.scene.add_sprite_list(LAYER_NAME_BOSS)
 
-        self.boss = Boss()
-        self.boss.center_x = 400
-        self.boss.center_y = 400
-        self.boss.change_y = -20
+        # Sets up the map's specific enemy requirements
+        self.load_enemies_and_map()
 
-        self.scene.add_sprite(LAYER_NAME_ENEMIES, self.boss)
-        self.enemies.append(self.boss)
-
-        self.end_of_map = self.tile_map.tiled_map.map_size.width * GRID_PIXEL_SIZE
+        # Init arrow layer for scene
         self.scene.add_sprite_list(LAYER_NAME_ARROWS)
 
+        # Set background
+        arcade.set_background_color(arcade.csscolor.SKY_BLUE)
 
-        #enemies
-        # enemies_layer = self.tile_map.object_lists[LAYER_NAME_ENEMIES]
-        # for my_object in enemies_layer:
-        #     cartesian = self.tile_map.get_cartesian(my_object.shape[0], my_object.shape[1])
-        #     enemy_type = my_object.properties['type']
-        #     if enemy_type == 'Xeno':
-        #         enemy = MiniEnemy()
-        #     elif enemy_type =='darkemperor':
-        #         enemy = Boss()
-        #     enemy.center_x = math.floor(cartesian[0] * MAP_SCALING * self.tile_map.tile_width)
-        #     enemy.center_y = math.floor((cartesian[1] + 1) * (self.tile_map.tile_height * MAP_SCALING))
-        #
-        #     if "boundary_left" in my_object.properties:
-        #         enemy.boundary_left = my_object.properties["boundary_left"]
-        #
-        #     if "boundary_right" in my_object.properties:
-        #         enemy.boundary_left = my_object.properties["boundary_right"]
-        #
-        #     if "change_x" in my_object.properties:
-        #         enemy.change_x = my_object.properties["change_x"]
-        #     self.scene.add_sprite(LAYER_NAME_ENEMIES, enemy)
-
-        if self.tile_map.tiled_map.background_color:
-            arcade.set_background_color(arcade.csscolor.SKY_BLUE)
-
-
+        # Setup Physics engine
         self.physics_engine = arcade.PhysicsEnginePlatformer(self.player,[self.scene.get_sprite_list(LAYER_NAME_PLATFORMS)], gravity_constant = GRAVITY,)
 
-        # pass
-        #old player properties
-    #def create_player_sprite(self):
-        #characters_path = ASSETS_PATH / "player_sprites"
-        #player_standing = arcade.load_texture(characters_path / "king1.png")
-        #walk_cycle = []
-        #for i in range((4)):
-            #walk_cycle.append(arcade.load_texture(characters_path / ("king" + str(i+1) + ".png")))
-        # player_walk_right =
 
 
-        # Set the player defaults
-        #player = arcade.AnimatedWalkingSprite()
-        #player.stand_left_textures = [player_standing]
-        #player.stand_right_textures = [player_standing]
-        #player.walk_left_textures = walk_cycle
-        #player.walk_right_textures = walk_cycle
-        #player.center_x = 200
-        #player.center_y = 200
-        #player.state = arcade.FACE_RIGHT
-        #player.texture = walk_cycle[0]
-        #return player
 
-    def process_keychange(self):
-        """called when we change up/down or ladder"""
-        if self.up_pressed and not self.down_pressed:
-            if(self.physics_engine.can_jump(y_distance=10) and not self.jump_needs_reset):
-                self.player.change_y = PLAYER_JUMP_SPEED
-                self.jump_needs_reset = True
-
-        if self.right_pressed and not self.left_pressed:
-            self.player.change_x = PLAYER_MOVEMENT_SPEED
-        elif self.left_pressed and not self.right_pressed:
-            self.player.change_x = -PLAYER_MOVEMENT_SPEED
-        else:
-            self.player.change_x = 0
 
     def on_key_press(self, key: int, modifiers: int):
         """Arguments:
@@ -402,18 +371,30 @@ class Platformer(arcade.Window):
         """
         # player moving to the left
         if key == arcade.key.A:
-            self.left_pressed = True
+            self.move_left = True
         #player moving to the right
         elif key == arcade.key.D :
-            self.right_pressed = True
+            self.move_right = True
         # player moving up
         elif key == arcade.key.W:
             self.up_pressed = True
 
         if key == arcade.key.J:
             self.shoot_pressed = True
+        if key == arcade.key.K:
+            self.slash_pressed = True
 
-        self.process_keychange()
+        if self.up_pressed:
+            if (self.physics_engine.can_jump(y_distance=10) and self.can_jump):
+                self.player.change_y = PLAYER_JUMP_SPEED
+                self.jump_needs_reset = False
+
+        if self.move_right and not self.move_left:
+            self.player.change_x = PLAYER_MOVEMENT_SPEED
+        elif self.move_left and not self.move_right:
+            self.player.change_x = -PLAYER_MOVEMENT_SPEED
+        else:
+            self.player.change_x = 0
 
     def on_key_release(self, key: int, modifiers: int):
         """Arguments:
@@ -421,19 +402,32 @@ class Platformer(arcade.Window):
         modifiers {int} -- Which modifiers were down at the time
         """
         if key == arcade.key.A:
-            self.left_pressed = False
+            self.move_left = False
         elif key == arcade.key.D:
-            self.right_pressed = False
+            self.move_right = False
         elif key == arcade.key.W:
             self.up_pressed = False
-            self.jump_needs_reset = False
-        # elif key == arcade.key.S or key == arcade.key.DOWN:
-        #     self.down_pressed = False
+            self.can_jump = True
+
 
         if key == arcade.key.J:
             self.shoot_pressed = False
+        if key == arcade.key.K:
+            self.slash_pressed = False
 
-        self.process_keychange()
+        # Jump only if
+        if self.up_pressed:
+            if self.physics_engine.can_jump(y_distance=10) and not self.can_jump:
+                self.player.change_y = PLAYER_JUMP_SPEED
+                self.can_jump = False
+
+        # will cancel out movement if both keys are pressed, or neither
+        if self.move_right and not self.move_left:
+            self.player.change_x = PLAYER_MOVEMENT_SPEED
+        elif self.move_left and not self.move_right:
+            self.player.change_x = -PLAYER_MOVEMENT_SPEED
+        else:
+            self.player.change_x = 0
 
     def on_update(self, delta_time: float):
         """Updates the position of all game objects
@@ -441,38 +435,39 @@ class Platformer(arcade.Window):
         Arguments:
             delta_time {float} -- How much time since the last call
         """
-
+        self.enemy_collision_timer += 0.5
         #self.player.update_animation(delta_time)
         self.physics_engine.update()
+
+        self.slash.center_y = self.player.center_y
+
+        self.slash.character_face_direction = self.player.character_face_direction
+        if self.slash.character_face_direction == CHARACTER_FACE_RIGHT:
+            self.slash.center_x = self.player.center_x +16
+        else:
+            self.slash.center_x = self.player.center_x -16
 
         if  self.physics_engine.can_jump():
             self.player.can_jump = False
         else:
             self.player.can_jump = True
 
-        #if self.player.is_on_ladder() and not self.physics_engine.can_jump():
-            #self.player.is_on_ladder = True
-            #self.process_keychange()
-        #else:
-            #self.player.is_on_ladder = False
-            #self.process_keychange()
-
         self.bow.center_x = self.player.center_x
         self.bow.center_y = self.player.center_y
         self.bow.change_x = self.player.change_x
         self.bow.character_face_direction = self.player.character_face_direction
 
-        if self.can_shoot:
+        if self.attack:
             if self.shoot_pressed:
                 self.bow.visible = True
-                self.bow.scale = 1.5
+                self.slash.visible = False
+
                 arrow = Arrow("images/Arrows", "arrow")
                 arrow.scale = 2
 
                 if self.player.character_face_direction == CHARACTER_FACE_RIGHT:
 
                     arrow.change_x = ARROW_SPEED
-
                     arrow.center_x = self.player.center_x+10
                     arrow.center_y = self.player.center_y
                 else:
@@ -483,118 +478,145 @@ class Platformer(arcade.Window):
 
                 self.scene.add_sprite(LAYER_NAME_ARROWS, arrow)
 
-                self.can_shoot = False
+                self.attack = False
+            elif self.slash_pressed:
+
+                self.slash.visible = True
+                self.slash.character_face_direction = self.player.character_face_direction
+
+                if self.slash.character_face_direction == CHARACTER_FACE_RIGHT:
+                    self.slash.center_x = self.player.center_x + 16
+                else:
+                    self.slash.center_x = self.player.center_x - 16
+                self.bow.visible = False
+                self.attack = False
+
         else:
+            # only show the sprite (bow or slash) temporarily
+            self.attack_timer += 0.5
+            if self.attack_timer > ATTACK_INTERVAL / 4:
+                self.slash.visible = False
 
-            self.shoot_timer += 0.5
-            if self.shoot_timer >= SHOOT_SPEED:
-
-                self.can_shoot = True
-                self.shoot_timer = 0
-            elif self.shoot_timer > SHOOT_SPEED/2:
+            if self.attack_timer >= ATTACK_INTERVAL:
+                self.attack = True
+                self.attack_timer = 0
+            elif self.attack_timer > ATTACK_INTERVAL / 2:
                 self.bow.visible = False
 
+        # delete arrows that leave the map
         for arrow in self.scene.get_sprite_list(LAYER_NAME_ARROWS):
+            if arrow.center_x < -20 or arrow.center_x > self.tile_map.width* MAP_PIXEL_MULTIPLIER:
+                self.scene.get_sprite_list(LAYER_NAME_ARROWS).remove(arrow)
             arrow.center_x += arrow.change_x
 
         # implements collision with enemies
-        # if(arcade.check_for_collision_with_list(self.player, self.scene.get_sprite_list(LAYER_NAME_ENEMIES))):
-        #     self.player.center_y = 250
+        if(arcade.check_for_collision_with_list(self.player, self.scene.get_sprite_list(LAYER_NAME_ENEMIES))):
+            if self.enemy_collision_timer >= 60:
+                self.player.health -= 1
+                self.enemy_collision_timer = 0
+
+        # delete arrows that touch the platforms
+        for arrow in self.scene.get_sprite_list(LAYER_NAME_ARROWS):
+            if arcade.check_for_collision_with_list(arrow, self.scene.get_sprite_list(LAYER_NAME_PLATFORMS)):
+                self.scene.get_sprite_list(LAYER_NAME_ARROWS).remove(arrow)
+
+        # check if player can move to next level
+        if arcade.check_for_collision_with_list(self.player, self.tile_map.sprite_lists["Victory"]):
+            self.level+= 1
+            print("Winner")
+            self.setup()
+
+
+        # if(arcade.check_for_collision_with_list(self.player, self.scene.get_sprite_list(LAYER_NAME_BOSS))):
+        #     if self.enemy_collision_timer >= 60:
+        #         self.player.health -= 1
+        #         self.enemy_collision_timer = 0
         #
-        # if(arcade.check_for_collision_with_list(self.player, self.scene.get_sprite_list(LAYER_NAME_BOSS))):
-        #     self.player.center_y = 250
 
-
-
-
-        # enemy missing collision for walls?
-
-
-        # if arcade.check_for_collision_with_list( self.boss, self.scene.get_sprite_list(LAYER_NAME_PLATFORMS)):
-        #     self.boss.change_y = 0
-        # else:
-        #     self.boss.center_y += self.boss.change_y
-
-        # if(arcade.check_for_collision_with_list(self.player, self.scene.get_sprite_list(LAYER_NAME_BOSS))):
-            # self.player.center_y += 650
-
-        # Enemies chase you within 300 units
+        # Enemies chase you within 300 units of height, 500 units of width
         for enemy in self.enemies:
 
-            if abs(self.player.center_y - enemy.center_y < 300) and abs(self.player.center_x - enemy.center_x) < 500 and not arcade.check_for_collision_with_list(enemy, self.scene.get_sprite_list(LAYER_NAME_PLATFORMS)):
-
+            if (abs(self.player.center_y - enemy.center_y < 300) and
+                    abs(self.player.center_x - enemy.center_x) < 500 and not arcade.check_for_collision_with_list(enemy, self.scene.get_sprite_list(LAYER_NAME_PLATFORMS))):
                 if self.player.center_x >= enemy.center_x:
-                    enemy.change_x = 7
+                    enemy.change_x = ENEMY_MOVEMENT_SPEED
                     enemy.center_x += enemy.change_x
                 elif self.player.center_x < enemy.center_x:
-                    enemy.change_x = -7
+                    enemy.change_x = -ENEMY_MOVEMENT_SPEED
                     enemy.center_x += enemy.change_x
             else:
                 enemy.change_x = 0
-        # some way of stutter stepping to move, i kinda like how stupid it is
-        # i am only allowed ot put one sprite for physics engine, so this is the next best thing
+
+        # Updates sprites too quickly
+        # Clunky way of "simulating gravity" on enemy
+        # Idea: Enemies move up if touching ground -> In air -> Touch ground again -> Repeat
         for enemy in self.enemies:
             if abs(self.player.center_y - enemy.center_y > 300) and abs(self.player.center_x - enemy.center_x) > 500:
-                enemy.change_y = 0
                 enemy.change_x = 0
             elif arcade.check_for_collision_with_list(enemy, self.scene.get_sprite_list(LAYER_NAME_PLATFORMS)):
                 enemy.change_y = 0
-                enemy.center_y += 10
+                enemy.center_y += ENEMY_LIFT_SPEED
             elif not arcade.check_for_collision_with_list(enemy, self.scene.get_sprite_list(LAYER_NAME_PLATFORMS)):
-                enemy.center_y += -5
+                enemy.center_y += ENEMY_FALL_SPEED
 
-        #FOR WHEN ENEMIES IS IMPLEMENTED
-        self.scene.update_animation(delta_time, [LAYER_NAME_PLAYER, LAYER_NAME_ENEMIES,
-                                                 LAYER_NAME_ARROWS, LAYER_NAME_BOW])
+        # arrow collision
+        for arrow in self.scene.get_sprite_list(LAYER_NAME_ARROWS):
+            for enemy in self.enemies:
 
-        #for enemy in self.scene.get_sprite_list(LAYER_NAME_ENEMIES):
-            #if(enemy.boundary_right and enemy.right > enemy.boundary_left and enemy.change_x > 0):
-                #enemy.change_x *= -1
+                if arcade.check_for_collision(arrow, enemy):
+                    print(enemy.center_x)
 
-            #if(enemy.boundary_left and enemy.left < enemy.boundary_left and enemy.change_x < 0):
-                #enemy.change_x *= -1
+                    enemy.health -= ARROW_DAMAGE
+                    self.scene.get_sprite_list(LAYER_NAME_ARROWS).remove(arrow)
+                    print(enemy.health)
+                    if(enemy.health <= 0):
+                        if enemy in self.scene.get_sprite_list(LAYER_NAME_ENEMIES):
 
-        #ENEMY COLLISION
-        #player_collision_list = arcade.check_for_collision_with_lists(self.player, [self.scene.get_sprite_list(LAYER_NAME_ENEMIES)],)
+                            self.enemies.remove(enemy)
+                            self.scene.get_sprite_list(LAYER_NAME_ENEMIES).remove(enemy)
+                            print("Enemy Dead")
+                    # break
 
-        # for arrow in self.scene.get_sprite_list(LAYER_NAME_ARROWS):
-        #     hit_list = arcade.check_for_collision_with_list(arrow,[self.scene.get_sprite_list(LAYER_NAME_ENEMIES), self.scene.get_sprite_list(LAYER_NAME_PLATFORMS),])
-        #
-        #     if hit_list:
-        #         arrow.remove_from_sprite_list()
-        #
-        #         for collision in hit_list:
-        #             if(self.scene.get_sprite_list(LAYER_NAME_ENEMIES) in collision.sprite_lists):
-        #                 collision.health -= ARROW_DAMAGE
-        #
-        #                 if collision.health <= 0:
-        #                     collision.remove_from_sprite_lists()
-        #                     self.score += 100
-        #         return
-        #     if (arrow.right < 0) or (arrow.left > (self.tile_map.width * self.tile_map.tile_width) * MAP_SCALING):
-        #         arrow.remove_from_sprite_list()
-        #for collision in player_collision_list:
-            #if self.player.health == 0:
-                #self.setup()
-                #return
-            #elif self.scene.get_sprite_list(LAYER_NAME_ENEMIES) in collision.sprite_lists:
-                #self.player.health -= 1
-                #return
+        if self.slash.visible:
 
-        self.center_camera_to_player()
+            for enemy in self.enemies:
+                if arcade.check_for_collision(self.slash, enemy):
+                    # print("Slash Hit")
+                    enemy.health -= SLASH_DAMAGE
+                    if self.player.center_x > enemy.center_x:
+                        enemy.center_x -= SLASH_X_KNOCKBACK
+                        # print("left hit")
+                    else:
+
+                        enemy.center_x += SLASH_X_KNOCKBACK
+                        # print("right hit")
+                    if (enemy.health <= 0):
+                        if enemy in self.scene.get_sprite_list(LAYER_NAME_ENEMIES):
+                            self.enemies.remove(enemy)
+                            self.scene.get_sprite_list(LAYER_NAME_ENEMIES).remove(enemy)
+                            print("Enemy Dead")
+
+        # Updates each sprite in layers
+        self.scene.update_animation(delta_time, [LAYER_NAME_PLAYER, LAYER_NAME_SLASH, LAYER_NAME_ENEMIES,
+                                                 LAYER_NAME_BOSS, LAYER_NAME_ARROWS, LAYER_NAME_BOW])
+        # restart the game level
+        if self.player.health == 0:
+            self.setup()
+
+
+        self.player_camera()
 
     def on_draw(self):
         arcade.start_render()
-
         self.camera.use()
         self.scene.draw(pixelated=True)
-        self.gui_camera.use()
 
-        # score_text = f"Score: {self.score}"
-        # arcade.draw_text(score_text, 10, 10, arcade.csscolor.BLACK, 18)
+        self.ui_camera.use()
+        health_number = f"Health: {self.player.health}"
+        arcade.draw_text(health_number, 10, 550, arcade.csscolor.BLACK, 18)
 
         # pass
-    def center_camera_to_player(self):
+    def player_camera(self):
         screen_center_x = self.player.center_x - (self.camera.viewport_width / 2)
         screen_center_y = self.player.center_y - (self.camera.viewport_height / 2)
 
@@ -605,6 +627,29 @@ class Platformer(arcade.Window):
         player_centered = screen_center_x, screen_center_y
 
         self.camera.move_to(player_centered)
+
+    def load_enemies_and_map(self):
+        if self.level == 1:
+            pass
+        elif self.level == 2:
+            for i in range(5):
+                enemy = MiniEnemy()
+                enemy.center_x = 600 + ((i*10) * 60)
+                enemy.center_y = 100
+                enemy.change_y = ENEMY_FALL_SPEED
+                enemy.change_x = ENEMY_MOVEMENT_SPEED
+                self.scene.add_sprite(LAYER_NAME_ENEMIES, enemy)
+                self.enemies.append(enemy)
+
+            self.boss = Boss()
+            self.boss.center_x = 400
+            self.boss.center_y = 400
+            self.boss.change_y = ENEMY_FALL_SPEED
+
+            self.scene.add_sprite(LAYER_NAME_BOSS, self.boss)
+            self.enemies.append(self.boss)
+
+
 
 def main():
     window = Platformer()
