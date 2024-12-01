@@ -1,7 +1,8 @@
-import os.path
+import os
 import pathlib
 import math
 import arcade
+import arcade.gui
 
 # Global constants
 # Window Resolution and Title
@@ -22,6 +23,7 @@ SCREEN_TITLE = "Deprecated King"
 ASSETS_PATH = pathlib.Path(__file__).resolve().parent.parent / "assets"
 
 # Sprite Scaling
+GAME_LEVEL = 1
 MAP_SIZE_MULTIPLIER = 2.0
 PLAYER_SIZE_MULTIPLIER = 2.0
 XENO_SIZE_MULTIPLIER = 0.5
@@ -231,10 +233,10 @@ class PlayerCharacter(Character):
         self.health = 3
         self.character_face_direction = CHARACTER_FACE_RIGHT
 
-class Platformer(arcade.Window):
+class Platformer(arcade.View):
     """Creates the window which the user interacts with """
     def __init__(self) -> None:
-        super().__init__(HORIZONTAL_SCREEN, VERTICAL_SCREEN, SCREEN_TITLE)
+        super().__init__()
         arcade.set_background_color(arcade.csscolor.SKY_BLUE)
 
         # Track key presses (Movement and Combat)
@@ -281,7 +283,11 @@ class Platformer(arcade.Window):
         self.can_collision_damage = False
 
         # Track level for changing levels/maps
-        self.level = 1
+        self.level = GAME_LEVEL
+
+        self.heart_texture = arcade.load_texture(ASSETS_PATH / "Health" / "heart.png")
+        self.emptyHeart_texture = arcade.load_texture(ASSETS_PATH / "Health" / "unfilled heart.png")
+
 
         # Load up our sounds here
         # self.coin_sound = arcade.load_sound(
@@ -302,8 +308,8 @@ class Platformer(arcade.Window):
 
         # Camera setup
         # For some reason, needs 2 cameras, otherwise ui wont follow
-        self.camera = arcade.Camera(self.width, self.height)
-        self.ui_camera = arcade.Camera(self.width, self.height)
+        self.camera = arcade.Camera(self.window.width, self.window.height)
+        self.ui_camera = arcade.Camera(self.window.width, self.window.height)
 
 
         # Tracks attack interval time
@@ -395,6 +401,11 @@ class Platformer(arcade.Window):
             self.player.change_x = -PLAYER_MOVEMENT_SPEED
         else:
             self.player.change_x = 0
+
+        if key == arcade.key.ESCAPE:
+            #Pass the current view to preserve this view's state
+            pause = PauseView(self)
+            self.window.show_view(pause)
 
     def on_key_release(self, key: int, modifiers: int):
         """Arguments:
@@ -612,8 +623,27 @@ class Platformer(arcade.Window):
         self.scene.draw(pixelated=True)
 
         self.ui_camera.use()
-        health_number = f"Health: {self.player.health}"
-        arcade.draw_text(health_number, 10, 550, arcade.csscolor.BLACK, 18)
+        health_number = "Health: "
+        arcade.draw_text(health_number, 10, 575, arcade.csscolor.BLACK, 18)
+        if(self.player.health == 3):
+            arcade.draw_texture_rectangle(97, 583, 25, 25, self.heart_texture)
+            arcade.draw_texture_rectangle(122, 583, 25, 25, self.heart_texture)
+            arcade.draw_texture_rectangle(147, 583, 25, 25, self.heart_texture)
+
+        if (self.player.health == 2):
+            arcade.draw_texture_rectangle(97, 583, 25, 25, self.heart_texture)
+            arcade.draw_texture_rectangle(122, 583, 25, 25, self.heart_texture)
+            arcade.draw_texture_rectangle(147, 583, 25, 25, self.emptyHeart_texture)
+
+        if (self.player.health == 1):
+            arcade.draw_texture_rectangle(97, 583, 25, 25, self.heart_texture)
+            arcade.draw_texture_rectangle(122, 583, 25, 25, self.emptyHeart_texture)
+            arcade.draw_texture_rectangle(147, 583, 25, 25, self.emptyHeart_texture)
+
+        if (self.player.health == 0):
+            arcade.draw_texture_rectangle(97, 583, 25, 25, self.emptyHeart_texture)
+            arcade.draw_texture_rectangle(122, 583, 25, 25, self.emptyHeart_texture)
+            arcade.draw_texture_rectangle(147, 583, 25, 25, self.emptyHeart_texture)
 
         # pass
     def player_camera(self):
@@ -650,11 +680,147 @@ class Platformer(arcade.Window):
             self.enemies.append(self.boss)
 
 
+class Start(arcade.View):
+    def __init__(self):
+        super().__init__()
+        self.manager = arcade.gui.UIManager()
+        self.manager.enable()
+
+        self.v_box = arcade.gui.UIBoxLayout()
+        self.h_box = arcade.gui.UIBoxLayout(vertical=False)
+
+        start_button = arcade.gui.UIFlatButton(text="Start",width=200)
+        self.v_box.add(start_button.with_space_around(bottom=5))
+        @start_button.event("on_click")
+        def on_click_start(event):
+            game_view = Platformer()
+            game_view.setup()
+            self.window.show_view(game_view)
+
+        level1 = arcade.gui.UIFlatButton(text="Level 1", width=200)
+        self.h_box.add(level1.with_space_around(right=5))
+
+        @level1.event("on_click")
+        def on_click_start(event):
+            game_view = Platformer()
+            game_view.setup()
+            self.window.show_view(game_view)
+
+        level2 = arcade.gui.UIFlatButton(text="Level 2", width=200)
+        self.h_box.add(level2.with_space_around(right=5))
+
+
+        @level2.event("on_click")
+        def on_click_start(event):
+            game_view = Platformer()
+            game_view.setup()
+            self.window.show_view(game_view)
+
+        level3 = arcade.gui.UIFlatButton(text="Level 3", width=200)
+        self.h_box.add(level3.with_space_around(right=5))
+
+        @level3.event("on_click")
+        def on_click_start(event):
+            game_view = Platformer()
+            game_view.setup()
+            self.window.show_view(game_view)
+
+        self.v_box.add(self.h_box)
+        self.manager.add(arcade.gui.UIAnchorWidget(anchor_x="center_x", anchor_y="bottom",child=self.v_box))
+
+    def on_show(self):
+        arcade.set_background_color(arcade.csscolor.SKY_BLUE)
+
+        arcade.set_viewport(0, self.window.width, 0, self.window.height)
+
+    def on_draw(self):
+        """ Draw this view """
+        arcade.start_render()
+        arcade.draw_text("Start Game", self.window.width / 2, 500,
+                         arcade.color.BLACK, font_size=50, anchor_x="center")
+        arcade.draw_text("Click Start or Press Space to Start", self.window.width / 2, 230,
+                         arcade.color.BLACK, font_size=50, anchor_x="center")
+        arcade.draw_text("You can also Select a Level", self.window.width / 2, 160,
+                         arcade.color.BLACK, font_size=50, anchor_x="center")
+        arcade.draw_text("How to Play the Game", self.window.width / 2, 445,
+                         arcade.color.RED, font_size=20, anchor_x="center")
+        arcade.draw_text("To Move Left Press the A Button", self.window.width / 2, 415,
+                         arcade.color.RED, font_size=20, anchor_x="center")
+        arcade.draw_text("To Move Right Press the D Button", self.window.width / 2, 385,
+                         arcade.color.RED, font_size=20, anchor_x="center")
+        arcade.draw_text("To Jump Press the W Button", self.window.width / 2, 355,
+                         arcade.color.RED, font_size=20, anchor_x="center")
+        arcade.draw_text("To Attack Close Range Press K", self.window.width / 2, 325,
+                         arcade.color.RED, font_size=20, anchor_x="center")
+        arcade.draw_text("To Attack Long Range Press J", self.window.width / 2, 295,
+                         arcade.color.RED, font_size=20, anchor_x="center")
+        self.manager.draw()
+
+    def on_key_press(self, key: int, modifiers: int):
+        if key == arcade.key.SPACE:
+            game_view = Platformer()
+            game_view.setup()
+            self.window.show_view(game_view)
+
+class PauseView(arcade.View):
+    """shows up when the game is pause"""
+
+    def __init__(self, game_view: arcade.View) -> None:
+        """Create the pause screen"""
+        # Initialize the parent
+        super().__init__()
+
+        # Store a reference to the underlying view
+        self.game_view = game_view
+
+        self.manager = arcade.gui.UIManager()
+        self.manager.enable()
+
+        self.v_box = arcade.gui.UIBoxLayout()
+
+        cont_button = arcade.gui.UIFlatButton(text="Continue", width=200)
+        self.v_box.add(cont_button)
+
+        @cont_button.event("on_click")
+        def on_click_start(event):
+            self.window.show_view(self.game_view)
+
+        self.manager.add(arcade.gui.UIAnchorWidget(anchor_x="center_x", anchor_y="bottom", child=self.v_box))
+
+    def on_show(self):
+        arcade.set_background_color(arcade.csscolor.SKY_BLUE)
+
+    def on_draw(self):
+        """ Draw this view """
+        arcade.start_render()
+        arcade.draw_text("Game is Paused", self.window.width / 2, 500,
+                         arcade.color.BLACK, font_size=50, anchor_x="center")
+        arcade.draw_text("Click Continue or Press Space to Continue", self.window.width / 2, 100,
+                         arcade.color.BLACK, font_size=40, anchor_x="center")
+        arcade.draw_text("How to Play the Game", self.window.width / 2, 445,
+                         arcade.color.RED, font_size=20, anchor_x="center")
+        arcade.draw_text("To Move Left Press the A Button", self.window.width / 2, 415,
+                         arcade.color.RED, font_size=20, anchor_x="center")
+        arcade.draw_text("To Move Right Press the D Button", self.window.width / 2, 385,
+                         arcade.color.RED, font_size=20, anchor_x="center")
+        arcade.draw_text("To Jump Press the W Button", self.window.width / 2, 355,
+                         arcade.color.RED, font_size=20, anchor_x="center")
+        arcade.draw_text("To Attack Close Range Press K", self.window.width / 2, 325,
+                         arcade.color.RED, font_size=20, anchor_x="center")
+        arcade.draw_text("To Attack Long Range Press J", self.window.width / 2, 295,
+                         arcade.color.RED, font_size=20, anchor_x="center")
+        self.manager.draw()
+
+    def on_key_press(self, key: int, modifiers: int):
+        if key == arcade.key.SPACE:
+            self.window.show_view(self.game_view)
 
 def main():
-    window = Platformer()
-    window.setup()
+    window = arcade.Window(HORIZONTAL_SCREEN, VERTICAL_SCREEN, SCREEN_TITLE)
+    start = Start()
+    window.show_view(start)
     arcade.run()
 
 if __name__ == "__main__":
     main()
+
