@@ -36,7 +36,7 @@ MAP_PIXEL_MULTIPLIER = SPRITE_PIXEL_MULTIPLIER * MAP_SIZE_MULTIPLIER
 # Physics and Movement Constants
 ENEMY_MOVEMENT_SPEED = 3
 PLAYER_MOVEMENT_SPEED = 7
-GRAVITY = 1.2
+GRAVITY = 2.5
 PLAYER_JUMP_SPEED = 25
 SLASH_X_KNOCKBACK = 20
 
@@ -695,8 +695,11 @@ class Start(arcade.View):
         self.v_box = arcade.gui.UIBoxLayout()
         self.h_box = arcade.gui.UIBoxLayout(vertical=False)
 
-        start_button = arcade.gui.UIFlatButton(text="Start",width=200)
-        self.v_box.add(start_button.with_space_around(bottom=5))
+
+        self.play_texture = arcade.load_texture(ASSETS_PATH / "screens" / "start.png")
+        start_button = arcade.gui.UITextureButton(texture=self.play_texture, width=200, height=200)
+        self.v_box.add(start_button.with_space_around(bottom=0))
+
         @start_button.event("on_click")
         def on_click_start(event):
             game_view = Platformer()
@@ -759,29 +762,35 @@ class Start(arcade.View):
             game_view.setup()
             self.window.show_view(game_view)
 
-        self.v_box.add(self.h_box)
-        self.manager.add(arcade.gui.UIAnchorWidget(anchor_x="center_x", anchor_y="bottom",child=self.v_box))
+        #self.v_box.add(self.h_box)
+        self.manager.add(arcade.gui.UIAnchorWidget(anchor_x="center_x", anchor_y="bottom", align_y=75,child=self.v_box))
+
+        self.manager.add(
+            arcade.gui.UIAnchorWidget(anchor_x="center_x", anchor_y="bottom", align_x=2.5,align_y=10, child=self.h_box))
+
 
     def on_draw(self):
         """ Draw this view """
         arcade.start_render()
-        arcade.draw_text("Start Game", self.window.width / 2, 500,
+        arcade.draw_text("Start Game", self.window.width / 2, 530,
                          arcade.color.BLACK, font_size=50, anchor_x="center")
-        arcade.draw_text("Click Start or Press Space to Start", self.window.width / 2, 230,
+        arcade.draw_text("Click Start or Press Space to Start", self.window.width / 2, 240,
                          arcade.color.BLACK, font_size=50, anchor_x="center")
-        arcade.draw_text("You can also Select a Level", self.window.width / 2, 160,
+        arcade.draw_text("You can also Select a Level", self.window.width / 2, 75,
                          arcade.color.BLACK, font_size=50, anchor_x="center")
-        arcade.draw_text("How to Play the Game", self.window.width / 2, 445,
+        arcade.draw_text("How to Play the Game", self.window.width / 2, 495,
+                         arcade.color.RED, font_size=30, anchor_x="center")
+        arcade.draw_text("To Move Left Press A", self.window.width / 2, 465,
                          arcade.color.RED, font_size=20, anchor_x="center")
-        arcade.draw_text("To Move Left Press the A Button", self.window.width / 2, 415,
+        arcade.draw_text("To Move Right Press D", self.window.width / 2, 435,
                          arcade.color.RED, font_size=20, anchor_x="center")
-        arcade.draw_text("To Move Right Press the D Button", self.window.width / 2, 385,
+        arcade.draw_text("To Jump Press W", self.window.width / 2, 405,
                          arcade.color.RED, font_size=20, anchor_x="center")
-        arcade.draw_text("To Jump Press the W Button", self.window.width / 2, 355,
+        arcade.draw_text("To Attack Close Range Press K", self.window.width / 2, 375,
                          arcade.color.RED, font_size=20, anchor_x="center")
-        arcade.draw_text("To Attack Close Range Press K", self.window.width / 2, 325,
+        arcade.draw_text("To Attack Long Range Press J", self.window.width / 2, 345,
                          arcade.color.RED, font_size=20, anchor_x="center")
-        arcade.draw_text("To Attack Long Range Press J", self.window.width / 2, 295,
+        arcade.draw_text("If You Need to Pause Press ESC", self.window.width / 2, 315,
                          arcade.color.RED, font_size=20, anchor_x="center")
         self.manager.draw()
 
@@ -809,24 +818,26 @@ class PauseView(arcade.View):
 
         self.v_box = arcade.gui.UIBoxLayout()
 
-        cont_button = arcade.gui.UIFlatButton(text="Continue", width=200)
-        self.v_box.add(cont_button)
+        self.cont_texture = arcade.load_texture(ASSETS_PATH / "screens" / "cont.png")
+        cont_button = arcade.gui.UITextureButton(texture=self.cont_texture, width=245, height=112)
+        self.v_box.add(cont_button.with_space_around(bottom=0))
 
         @cont_button.event("on_click")
         def on_click_start(event):
             self.window.show_view(self.game_view)
 
-        self.manager.add(arcade.gui.UIAnchorWidget(anchor_x="center_x", anchor_y="bottom", child=self.v_box))
+        self.manager.add(arcade.gui.UIAnchorWidget(anchor_x="center_x", anchor_y="bottom", align_y=100, child=self.v_box))
 
-    def on_show(self):
         arcade.set_background_color(arcade.csscolor.SKY_BLUE)
+
+        self.pause_texture = arcade.load_texture(ASSETS_PATH / "screens" / "pause.png")
 
     def on_draw(self):
         """ Draw this view """
         arcade.start_render()
         arcade.draw_text("Game is Paused", self.window.width / 2, 500,
                          arcade.color.BLACK, font_size=50, anchor_x="center")
-        arcade.draw_text("Click Continue or Press Space to Continue", self.window.width / 2, 100,
+        arcade.draw_text("Click Continue or Press Space to Continue", self.window.width / 2, 210,
                          arcade.color.BLACK, font_size=40, anchor_x="center")
         arcade.draw_text("How to Play the Game", self.window.width / 2, 445,
                          arcade.color.RED, font_size=20, anchor_x="center")
@@ -839,6 +850,8 @@ class PauseView(arcade.View):
         arcade.draw_text("To Attack Close Range Press K", self.window.width / 2, 325,
                          arcade.color.RED, font_size=20, anchor_x="center")
         arcade.draw_text("To Attack Long Range Press J", self.window.width / 2, 295,
+                         arcade.color.RED, font_size=20, anchor_x="center")
+        arcade.draw_text("If You Need to Pause Press ESC", self.window.width / 2, 265,
                          arcade.color.RED, font_size=20, anchor_x="center")
         self.manager.draw()
 
@@ -861,14 +874,15 @@ class GameOver(arcade.View):
         self.v_box = arcade.gui.UIBoxLayout()
         self.h_box = arcade.gui.UIBoxLayout(vertical=False)
 
-        restart_button = arcade.gui.UIFlatButton(text="Restart", width=200)
+        self.restart_texture = arcade.load_texture(ASSETS_PATH / "screens" / "reset.png")
+        restart_button = arcade.gui.UITextureButton(texture=self.restart_texture, width=210, height=96)
+
         self.v_box.add(restart_button.with_space_around(bottom=5))
 
         @restart_button.event("on_click")
         def on_click_restart(event):
-            game_view = Platformer()
-            game_view.setup()
-            self.window.show_view(game_view)
+            start = Start()
+            self.window.show_view(start)
 
         level1 = arcade.gui.UIFlatButton(text="Level 1", width=200)
         self.h_box.add(level1.with_space_around(right=5))
@@ -925,39 +939,44 @@ class GameOver(arcade.View):
             game_view.setup()
             self.window.show_view(game_view)
 
-        self.v_box.add(self.h_box)
-        self.manager.add(arcade.gui.UIAnchorWidget(anchor_x="center_x", anchor_y="bottom", child=self.v_box))
+        #self.v_box.add(self.h_box)
+        self.manager.add(
+            arcade.gui.UIAnchorWidget(anchor_x="center_x", anchor_y="bottom", align_y=130, child=self.v_box))
+
+        self.manager.add(
+            arcade.gui.UIAnchorWidget(anchor_x="center_x", anchor_y="bottom", align_x=2.5, align_y=10,
+                                      child=self.h_box))
+        #self.manager.add(arcade.gui.UIAnchorWidget(anchor_x="center_x", anchor_y="bottom", child=self.v_box))
 
     def on_draw(self):
         """ Draw this view """
         arcade.start_render()
-        arcade.draw_text("Game Over", self.window.width / 2, 500,
+        arcade.draw_text("Game Over", self.window.width / 2, 530,
                          arcade.color.BLACK, font_size=50, anchor_x="center")
-        arcade.draw_text("Click Restart or Press Space to Restart", self.window.width / 2, 230,
+        arcade.draw_text("Click Reset or Press Space to Reset", self.window.width / 2, 240,
                          arcade.color.BLACK, font_size=40, anchor_x="center")
-        arcade.draw_text("You can also Select a Level", self.window.width / 2, 160,
+        arcade.draw_text("You can also Select a Level", self.window.width / 2, 75,
                          arcade.color.BLACK, font_size=50, anchor_x="center")
-        arcade.draw_text("How to Play the Game", self.window.width / 2, 445,
+        arcade.draw_text("How to Play the Game", self.window.width / 2, 495,
                          arcade.color.RED, font_size=20, anchor_x="center")
-        arcade.draw_text("To Move Left Press the A Button", self.window.width / 2, 415,
+        arcade.draw_text("To Move Left Press the A Button", self.window.width / 2, 465,
                          arcade.color.RED, font_size=20, anchor_x="center")
-        arcade.draw_text("To Move Right Press the D Button", self.window.width / 2, 385,
+        arcade.draw_text("To Move Right Press the D Button", self.window.width / 2, 435,
                          arcade.color.RED, font_size=20, anchor_x="center")
-        arcade.draw_text("To Jump Press the W Button", self.window.width / 2, 355,
+        arcade.draw_text("To Jump Press the W Button", self.window.width / 2, 405,
                          arcade.color.RED, font_size=20, anchor_x="center")
-        arcade.draw_text("To Attack Close Range Press K", self.window.width / 2, 325,
+        arcade.draw_text("To Attack Close Range Press K", self.window.width / 2, 375,
                          arcade.color.RED, font_size=20, anchor_x="center")
-        arcade.draw_text("To Attack Long Range Press J", self.window.width / 2, 295,
+        arcade.draw_text("To Attack Long Range Press J", self.window.width / 2, 345,
+                         arcade.color.RED, font_size=20, anchor_x="center")
+        arcade.draw_text("If You Need to Pause Press ESC", self.window.width / 2, 315,
                          arcade.color.RED, font_size=20, anchor_x="center")
         self.manager.draw()
 
     def on_key_press(self, key: int, modifiers: int):
         if key == arcade.key.SPACE:
-            global game_level
-            game_level = 1
-            game_view = Platformer()
-            game_view.setup()
-            self.window.show_view(game_view)
+            start = Start()
+            self.window.show_view(start)
 
 
 def main():
