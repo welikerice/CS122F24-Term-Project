@@ -36,7 +36,7 @@ MAP_PIXEL_MULTIPLIER = SPRITE_PIXEL_MULTIPLIER * MAP_SIZE_MULTIPLIER
 # Physics and Movement Constants
 ENEMY_MOVEMENT_SPEED = 3
 PLAYER_MOVEMENT_SPEED = 7
-GRAVITY = 2.5
+GRAVITY = 1.3
 PLAYER_JUMP_SPEED = 25
 SLASH_X_KNOCKBACK = 20
 
@@ -255,6 +255,7 @@ class Platformer(arcade.View):
 
         # For enemy and boss sprites
         self.enemies = None
+        self.enemy = None
         self.boss = None
 
         # mainly for displaying the platform i guess
@@ -526,6 +527,7 @@ class Platformer(arcade.View):
                 self.player.health -= 1
                 self.enemy_collision_timer = 0
 
+
         # delete arrows that touch the platforms
         for arrow in self.scene.get_sprite_list(LAYER_NAME_ARROWS):
             if arcade.check_for_collision_with_list(arrow, self.scene.get_sprite_list(LAYER_NAME_PLATFORMS)):
@@ -538,10 +540,10 @@ class Platformer(arcade.View):
             self.setup()
 
 
-        # if(arcade.check_for_collision_with_list(self.player, self.scene.get_sprite_list(LAYER_NAME_BOSS))):
-        #     if self.enemy_collision_timer >= 60:
-        #         self.player.health -= 1
-        #         self.enemy_collision_timer = 0
+        if(arcade.check_for_collision_with_list(self.player, self.scene.get_sprite_list(LAYER_NAME_BOSS))):
+             if self.enemy_collision_timer >= 60:
+                 self.player.health -= 1
+                 self.enemy_collision_timer = 0
         #
 
         # Enemies chase you within 300 units of height, 500 units of width
@@ -586,6 +588,12 @@ class Platformer(arcade.View):
                             self.enemies.remove(enemy)
                             self.scene.get_sprite_list(LAYER_NAME_ENEMIES).remove(enemy)
                             print("Enemy Dead")
+                        if enemy in self.scene.get_sprite_list(LAYER_NAME_BOSS):
+                            self.enemies.remove(enemy)
+                            self.scene.get_sprite_list(LAYER_NAME_BOSS).remove(enemy)
+                            print("Boos Dead")
+                            view = Victory()
+                            self.window.show_view(view)
                     # break
 
         if self.slash.visible:
@@ -606,6 +614,12 @@ class Platformer(arcade.View):
                             self.enemies.remove(enemy)
                             self.scene.get_sprite_list(LAYER_NAME_ENEMIES).remove(enemy)
                             print("Enemy Dead")
+                        if enemy in self.scene.get_sprite_list(LAYER_NAME_BOSS):
+                            self.enemies.remove(enemy)
+                            self.scene.get_sprite_list(LAYER_NAME_BOSS).remove(enemy)
+                            print("Boss Dead")
+                            view = Victory()
+                            self.window.show_view(view)
 
         # Updates each sprite in layers
         self.scene.update_animation(delta_time, [LAYER_NAME_PLAYER, LAYER_NAME_SLASH, LAYER_NAME_ENEMIES,
@@ -614,6 +628,7 @@ class Platformer(arcade.View):
         if self.player.health == 0:
             view = GameOver()
             self.window.show_view(view)
+
 
 
         self.player_camera()
@@ -672,13 +687,34 @@ class Platformer(arcade.View):
                 self.scene.add_sprite(LAYER_NAME_ENEMIES, enemy)
                 self.enemies.append(enemy)
 
+        elif self.level == 3:
+            for i in range(5):
+                enemy = MiniEnemy()
+                enemy.center_x = 600 + ((i * 10) * 60)
+                enemy.center_y = 1000
+                enemy.change_y = ENEMY_FALL_SPEED
+                enemy.change_x = ENEMY_MOVEMENT_SPEED
+                self.scene.add_sprite(LAYER_NAME_ENEMIES, enemy)
+                self.enemies.append(enemy)
+
+        elif self.level == 4:
+            for i in range(5):
+                enemy = MiniEnemy()
+                enemy.center_x = 600 + ((i * 10) * 30)
+                enemy.center_y = 1000
+                enemy.change_y = ENEMY_FALL_SPEED
+                enemy.change_x = ENEMY_MOVEMENT_SPEED
+                self.scene.add_sprite(LAYER_NAME_ENEMIES, enemy)
+                self.enemies.append(enemy)
+        elif self.level == 5:
             self.boss = Boss()
-            self.boss.center_x = 400
+            self.boss.center_x = 1100
             self.boss.center_y = 400
             self.boss.change_y = ENEMY_FALL_SPEED
 
             self.scene.add_sprite(LAYER_NAME_BOSS, self.boss)
             self.enemies.append(self.boss)
+
 
 
 class Start(arcade.View):
@@ -840,7 +876,7 @@ class PauseView(arcade.View):
         arcade.draw_text("Click Continue or Press Space to Continue", self.window.width / 2, 210,
                          arcade.color.BLACK, font_size=40, anchor_x="center")
         arcade.draw_text("How to Play the Game", self.window.width / 2, 445,
-                         arcade.color.RED, font_size=20, anchor_x="center")
+                         arcade.color.RED, font_size=30, anchor_x="center")
         arcade.draw_text("To Move Left Press the A Button", self.window.width / 2, 415,
                          arcade.color.RED, font_size=20, anchor_x="center")
         arcade.draw_text("To Move Right Press the D Button", self.window.width / 2, 385,
@@ -958,7 +994,7 @@ class GameOver(arcade.View):
         arcade.draw_text("You can also Select a Level", self.window.width / 2, 75,
                          arcade.color.BLACK, font_size=50, anchor_x="center")
         arcade.draw_text("How to Play the Game", self.window.width / 2, 495,
-                         arcade.color.RED, font_size=20, anchor_x="center")
+                         arcade.color.RED, font_size=30, anchor_x="center")
         arcade.draw_text("To Move Left Press the A Button", self.window.width / 2, 465,
                          arcade.color.RED, font_size=20, anchor_x="center")
         arcade.draw_text("To Move Right Press the D Button", self.window.width / 2, 435,
@@ -977,6 +1013,116 @@ class GameOver(arcade.View):
         if key == arcade.key.SPACE:
             start = Start()
             self.window.show_view(start)
+
+class Victory(arcade.View):
+    def __init__(self):
+        """ This is run once when we switch to this view """
+        super().__init__()
+
+        arcade.set_background_color(arcade.csscolor.SKY_BLUE)
+
+        arcade.set_viewport(0, self.window.width, 0, self.window.height)
+
+        self.manager = arcade.gui.UIManager()
+        self.manager.enable()
+
+        self.v_box = arcade.gui.UIBoxLayout()
+        self.h_box = arcade.gui.UIBoxLayout(vertical=False)
+
+        self.restart_texture = arcade.load_texture(ASSETS_PATH / "screens" / "reset.png")
+        restart_button = arcade.gui.UITextureButton(texture=self.restart_texture, width=210, height=96)
+
+        self.v_box.add(restart_button.with_space_around(bottom=5))
+
+        @restart_button.event("on_click")
+        def on_click_restart(event):
+            start = Start()
+            self.window.show_view(start)
+
+        level1 = arcade.gui.UIFlatButton(text="Level 1", width=200)
+        self.h_box.add(level1.with_space_around(right=5))
+
+        @level1.event("on_click")
+        def on_click_level1(event):
+            global game_level
+            game_level = 1
+            game_view = Platformer()
+            game_view.setup()
+            self.window.show_view(game_view)
+
+        level2 = arcade.gui.UIFlatButton(text="Level 2", width=200)
+        self.h_box.add(level2.with_space_around(right=5))
+
+        @level2.event("on_click")
+        def on_click_level2(event):
+            global game_level
+            game_level = 2
+            game_view = Platformer()
+            game_view.setup()
+            self.window.show_view(game_view)
+
+        level3 = arcade.gui.UIFlatButton(text="Level 3", width=200)
+        self.h_box.add(level3.with_space_around(right=5))
+
+        @level3.event("on_click")
+        def on_click_level3(event):
+            global game_level
+            game_level = 3
+            game_view = Platformer()
+            game_view.setup()
+            self.window.show_view(game_view)
+
+        level4 = arcade.gui.UIFlatButton(text="Level 4", width=200)
+        self.h_box.add(level4.with_space_around(right=5))
+
+        @level4.event("on_click")
+        def on_click_level4(event):
+            global game_level
+            game_level = 4
+            game_view = Platformer()
+            game_view.setup()
+            self.window.show_view(game_view)
+
+        level5 = arcade.gui.UIFlatButton(text="Level 5", width=200)
+        self.h_box.add(level5.with_space_around(right=5))
+
+        @level5.event("on_click")
+        def on_click_level5(event):
+            global game_level
+            game_level = 5
+            game_view = Platformer()
+            game_view.setup()
+            self.window.show_view(game_view)
+
+        #self.v_box.add(self.h_box)
+        self.manager.add(
+            arcade.gui.UIAnchorWidget(anchor_x="center_x", anchor_y="bottom", align_y=130, child=self.v_box))
+
+        self.manager.add(
+            arcade.gui.UIAnchorWidget(anchor_x="center_x", anchor_y="bottom", align_x=2.5, align_y=10,
+                                      child=self.h_box))
+        #self.manager.add(arcade.gui.UIAnchorWidget(anchor_x="center_x", anchor_y="bottom", child=self.v_box))
+
+    def on_draw(self):
+        """ Draw this view """
+        arcade.start_render()
+        arcade.draw_text("Victory!", self.window.width / 2, 530,
+                         arcade.color.BLACK, font_size=50, anchor_x="center")
+        arcade.draw_text("Click Reset or Press Space to Reset", self.window.width / 2, 240,
+                         arcade.color.BLACK, font_size=40, anchor_x="center")
+        arcade.draw_text("You can also Select a Level", self.window.width / 2, 75,
+                         arcade.color.BLACK, font_size=50, anchor_x="center")
+        arcade.draw_text("Congratulations", self.window.width / 2, 455,
+                         arcade.color.BLUE, font_size=40, anchor_x="center")
+        arcade.draw_text("You defeated the Boss!", self.window.width / 2, 395,
+                         arcade.color.BLUE, font_size=40, anchor_x="center")
+        self.manager.draw()
+
+    def on_key_press(self, key: int, modifiers: int):
+        if key == arcade.key.SPACE:
+            start = Start()
+            self.window.show_view(start)
+
 
 
 def main():
