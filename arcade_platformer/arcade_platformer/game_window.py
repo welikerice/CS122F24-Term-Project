@@ -185,6 +185,7 @@ class Character(arcade.Sprite):
             self.character_face_direction = CHARACTER_FACE_LEFT
         elif self.change_x > 0 and self.character_face_direction == CHARACTER_FACE_LEFT:
             self.character_face_direction = CHARACTER_FACE_RIGHT
+        # if you are not moving, just be idle:
         if self.change_x == 0:
             self.texture = self.idle_textures[self.character_face_direction]
             return
@@ -289,21 +290,6 @@ class Platformer(arcade.View):
         self.heart_texture = arcade.load_texture(ASSETS_PATH / "Health" / "heart.png")
         self.emptyHeart_texture = arcade.load_texture(ASSETS_PATH / "Health" / "unfilled heart.png")
 
-
-        # Load up our sounds here
-        # self.coin_sound = arcade.load_sound(
-        #     str(ASSETS_PATH / "sounds" / "coin.wav")
-        # )
-        # self.jump_sound = arcade.load_sound(
-        #     str(ASSETS_PATH / "sounds" / "jump.wav")
-        # )
-        # self.victory_sound = arcade.load_sound(
-        #     str(ASSETS_PATH / "sounds" / "victory.wav")
-        # )
-        # self.shoot_sound = arcade.load_sound(str(ASSETS_PATH / "sound" / "shoot.wav")
-
-        #self.hit_sound = arcade.load_sound(str(ASSETS_PATH / "sound" / "hit.wav")
-
     def setup(self):
         """Sets up the game for the current level"""
 
@@ -323,6 +309,8 @@ class Platformer(arcade.View):
             "Platforms Layer": {"use_spatial_hash": True},
         }
 
+
+        # Spatial = hash = speed up collision detection
         self.tile_map = arcade.load_tilemap(map, MAP_SIZE_MULTIPLIER, layer_options)
         # scene is needed, cannot directly use tile map as scene anymore
         self.scene = arcade.Scene.from_tilemap(self.tile_map)
@@ -392,7 +380,7 @@ class Platformer(arcade.View):
             self.slash_pressed = True
 
         if self.up_pressed:
-            if (self.physics_engine.can_jump(y_distance=10) and self.can_jump):
+            if (self.physics_engine.can_jump() and self.can_jump):
                 self.player.change_y = PLAYER_JUMP_SPEED
                 self.jump_needs_reset = False
 
@@ -427,9 +415,9 @@ class Platformer(arcade.View):
         if key == arcade.key.K:
             self.slash_pressed = False
 
-        # Jump only if
+        # Jump only if possible
         if self.up_pressed:
-            if self.physics_engine.can_jump(y_distance=10) and not self.can_jump:
+            if self.physics_engine.can_jump() and not self.can_jump:
                 self.player.change_y = PLAYER_JUMP_SPEED
                 self.can_jump = False
 
@@ -451,6 +439,8 @@ class Platformer(arcade.View):
         #self.player.update_animation(delta_time)
         self.physics_engine.update()
 
+
+        # updates position of slash and has it follow the user for attacking.
         self.slash.center_y = self.player.center_y
 
         self.slash.character_face_direction = self.player.character_face_direction
@@ -459,16 +449,21 @@ class Platformer(arcade.View):
         else:
             self.slash.center_x = self.player.center_x -16
 
+        # checks if player can jump
         if  self.physics_engine.can_jump():
             self.player.can_jump = False
         else:
             self.player.can_jump = True
 
+        # Updates bow position to follow user
         self.bow.center_x = self.player.center_x
         self.bow.center_y = self.player.center_y
         self.bow.change_x = self.player.change_x
         self.bow.character_face_direction = self.player.character_face_direction
 
+        # Attack system: All slash and arrows fall under same "cooldown"
+        # When the cooldown is completed, player may attack with bow or slashing
+        # Slashing is temporarily visible
         if self.attack:
             if self.shoot_pressed:
                 self.bow.visible = True
