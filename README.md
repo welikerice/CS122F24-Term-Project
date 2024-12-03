@@ -35,9 +35,12 @@ https://opengameart.org/content/a-platformer-in-the-forest Credits to: Buch
 
 https://opengameart.org/content/animated-fantasy-bows
 
-
 https://itch.io/game-assets/tag-2d/tag-heart
+
 https://studio.code.org/v3/assets/XKlmrTk072QRQNlRuMVwmMcEQ1Y09pOxh-EwmY31yXc/4c0d34c7b1f5865.png
+
 https://www.flaticon.com/free-icon/start-button_5360348
+
 https://www.cleanpng.com/png-pixel-art-speech-balloon-reset-button-pixel-912775/
 
+https://www.pngkey.com/maxpic/u2q8a9u2e6i1i1y3/
